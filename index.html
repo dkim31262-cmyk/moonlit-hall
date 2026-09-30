@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#07080d" />
+<title>หอภาษาจันทร์</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; background: #07080d; color: #f4efe6; }
+  body { font: 16px/1.5 "Source Sans 3", "Noto Sans Thai", system-ui, sans-serif; }
+  button, textarea { font: inherit; color: inherit; }
+  button { touch-action: manipulation; cursor: pointer; }
+  main { max-width: 32rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; }
+  h1 { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, serif; font-weight: 500; font-size: 2.2rem; line-height: 1.05; margin: .4rem 0; }
+  .gold { color: #c4a574; letter-spacing: .18em; font-size: .72rem; text-transform: uppercase; }
+  .muted { color: #b7b0a4; }
+  .card { border: 1px solid rgba(244,239,230,.16); border-radius: 18px; padding: 1rem 1rem .9rem; margin-top: 1rem; }
+  button.full, textarea { width: 100%; border-radius: 16px; }
+  button.full { min-height: 48px; border: 1px solid #c4a574; background: rgba(196,165,116,.12); margin-top: .6rem; }
+  button.ghost { min-height: 44px; border: 1px solid rgba(244,239,230,.25); background: transparent; margin-top: .45rem; }
+  textarea { min-height: 7rem; background: #12141c; border: 1px solid rgba(244,239,230,.2); padding: .8rem; margin-top: .7rem; }
+  .row { display: flex; gap: .5rem; }
+  .row button { flex: 1; }
+  .en { font-size: 1.15rem; }
+  .warn { font-size: .8rem; color: #b7b0a4; }
+</style>
+</head>
+<body>
+<main>
+  <p class="gold">The Moonlit Hall</p>
+  <h1>หอภาษาจันทร์</h1>
+  <p class="muted">เปิดใน Safari หรือ Chrome ได้เลย ไม่ต้องเข้า Grok ไม่มีล็อก</p>
+  <p class="warn">หนังสือคือแผนที่ หน้านี้คือกล้ามเนื้อ. เข้าใจก่อน แล้วพูด — ไม่ท่องตาม.</p>
+
+  <div class="card" id="home">
+    <p id="dayline"></p>
+    <p id="job" class="muted"></p>
+    <button class="full" id="go" type="button">ฝึกวันนี้</button>
+    <div class="row">
+      <button class="ghost" id="prev" type="button">วันก่อน</button>
+      <button class="ghost" id="next" type="button">วันถัดไป</button>
+    </div>
+  </div>
+
+  <div class="card" id="drill" hidden>
+    <p class="gold" id="scene"></p>
+    <p id="ask"></p>
+    <textarea id="line" placeholder="พิมพ์อังกฤษหนึ่งประโยค โดยไม่ดูต้นแบบ"></textarea>
+    <button class="full" id="say" type="button">พูดแล้วค่อยเปิดต้นแบบ</button>
+    <div id="after" hidden>
+      <p class="en" id="model"></p>
+      <p class="muted" id="gloss"></p>
+      <p id="reply"></p>
+      <div class="row">
+        <button class="ghost" id="slow" type="button">ฟังช้า</button>
+        <button class="ghost" id="nat" type="button">ฟังธรรมชาติ</button>
+      </div>
+      <button class="full" id="done" type="button">พอวันนี้</button>
+    </div>
+    <button class="ghost" id="back" type="button">กลับ</button>
+  </div>
+
+  <p class="warn">นี่คือภาษา ไม่ใช่การรักษา. คนไข้จำลองตอบตามบท ไม่ใช่แพทย์.</p>
+</main>
+<script>
+const DAYS = [
+  { d:1, t:"ชิ้นภาษาทุกวัน", ask:"คืนนี้คุณมาทำไม — ประโยคเดียว", en:"I am here.", th:"ฉันอยู่ที่นี่", reply:"Good. One more sentence: why you came." },
+  { d:2, t:"ซักประวัติ ปวดท้อง", ask:"คนไข้ปวดท้องตั้งแต่เมื่อคืน คุณถามอะไรก่อน", en:"How long have you had this?", th:"เป็นมานานเท่าไหร่", reply:"Since last night. It is worse this morning." },
+  { d:3, t:"เล่าสิ่งที่ฟัง", ask:"เล่าอาการที่เพิ่งได้ยิน เป็นอังกฤษสั้น ๆ", en:"You have had pain since last night.", th:"คุณปวดมาตั้งแต่เมื่อคืน", reply:"Yes. Around the navel. No blood." },
+  { d:4, t:"ตรวจร่างกาย", ask:"บอกคนไข้ว่าจะตรวจ", en:"I will examine you now.", th:"เดี๋ยวจะตรวจร่างกาย", reply:"All right. Where should I lie?" },
+  { d:5, t:"อธิบายภาษาง่าย", ask:"อธิบายว่ายังไม่รู้สาเหตุ โดยไม่ใช้ศัพท์แพทย์", en:"I do not know the cause yet. I need to examine you.", th:"ยังไม่รู้สาเหตุ ต้องตรวจก่อน", reply:"Is it serious?" },
+  { d:6, t:"เขียนเหตุผล", ask:"ทำไมอยากทำคลินิกท่องเที่ยว — สองประโยค", en:"I can cover hotel calls and walk-in patients.", th:"รับสายโรงแรมและคนไข้ walk-in ได้", reply:"Thank you. When can you start?" },
+  { d:7, t:"เคสทั้งวง", ask:"ถามระยะเวลา แล้วบอกว่าจะตรวจ", en:"How long have you had this? I will examine you now.", th:"เป็นมานานเท่าไหร่ เดี๋ยวจะตรวจ", reply:"Since last night. Please." },
+  { d:8, t:"ยาและความปลอดภัย", ask:"บอกให้กลับมาถ้าแย่ลง", en:"Come back if the pain gets worse, or if you vomit blood.", th:"ถ้าปวดขึ้นหรืออาเจียนเป็นเลือด ให้กลับมา", reply:"I understand. Thank you, doctor." },
+  { d:9, t:"สายโรงแรม", ask:"รับสายว่าไปได้ตอนนี้", en:"I can come now.", th:"ไปได้ตอนนี้", reply:"The guest is in room 412. Abdominal pain." },
+  { d:25, t:"สัมภาษณ์", ask:"บอกวันเริ่มและจำนวนวัน", en:"I can start on the twenty-fifth. I can work three days.", th:"เริ่มวันที่ 25 ได้ สามวัน", reply:"Can you cover hotel calls?" }
+];
+const KEY = "moonlit-open-day";
+let day = Number(localStorage.getItem(KEY) || "1");
+function lesson() { return DAYS.find(x => x.d === day) || DAYS[0]; }
+function paint() {
+  const L = lesson();
+  document.getElementById("dayline").textContent = "Day " + L.d + " · " + L.t;
+  document.getElementById("job").textContent = "พูดออกจากปากวันนี้ ไม่ต้องล็อกอิน";
+}
+function speak(text, rate) {
+  if (!window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "en-GB";
+  u.rate = rate;
+  speechSynthesis.speak(u);
+}
+document.getElementById("prev").onclick = () => { const i = DAYS.findIndex(x => x.d === day); day = DAYS[Math.max(0, i - 1)].d; localStorage.setItem(KEY, String(day)); paint(); };
+document.getElementById("next").onclick = () => { const i = DAYS.findIndex(x => x.d === day); day = DAYS[Math.min(DAYS.length - 1, i + 1)].d; localStorage.setItem(KEY, String(day)); paint(); };
+document.getElementById("go").onclick = () => {
+  const L = lesson();
+  document.getElementById("home").hidden = true;
+  document.getElementById("drill").hidden = false;
+  document.getElementById("after").hidden = true;
+  document.getElementById("scene").textContent = "Day " + L.d;
+  document.getElementById("ask").textContent = L.ask;
+  document.getElementById("line").value = "";
+};
+document.getElementById("say").onclick = () => {
+  const L = lesson();
+  const said = document.getElementById("line").value.trim();
+  if (said.length < 2) return;
+  document.getElementById("after").hidden = false;
+  document.getElementById("model").textContent = L.en;
+  document.getElementById("gloss").textContent = L.th;
+  document.getElementById("reply").textContent = L.reply;
+};
+document.getElementById("slow").onclick = () => speak(lesson().en, 0.72);
+document.getElementById("nat").onclick = () => speak(lesson().en, 0.95);
+document.getElementById("done").onclick = () => {
+  const i = DAYS.findIndex(x => x.d === day);
+  day = DAYS[Math.min(DAYS.length - 1, i + 1)].d;
+  localStorage.setItem(KEY, String(day));
+  document.getElementById("drill").hidden = true;
+  document.getElementById("home").hidden = false;
+  paint();
+};
+document.getElementById("back").onclick = () => {
+  document.getElementById("drill").hidden = true;
+  document.getElementById("home").hidden = false;
+};
+paint();
+</script>
+</body>
+</html>
