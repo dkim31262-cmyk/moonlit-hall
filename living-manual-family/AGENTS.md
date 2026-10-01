@@ -24,3 +24,12 @@ This folder is intended for collaboration across AI systems and human editors.
 - family-state.json — portable state/canon
 - README.md — human handoff
 - AGENTS.md — AI collaboration contract
+
+
+## Family handoff protocol
+When another AI receives this folder:
+1. Read `AGENTS.md` and `family-state.json` first.
+2. Inspect the current `index.html` before proposing changes.
+3. Preserve bilingual behavior and the breathing editorial architecture.
+4. Prefer a small, reversible change over rebuilding the whole system.
+5. Return either a branch/PR or an updated handoff JSON plus a concise change note.
