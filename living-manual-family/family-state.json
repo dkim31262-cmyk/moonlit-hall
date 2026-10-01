@@ -1,0 +1,13 @@
+{
+  "version": "3.0.0-family",
+  "language_default": "both",
+  "collaboration_surface": "GitHub",
+  "canon": [
+    "Bilingual by default",
+    "Breathing Editorial Architecture",
+    "Product first · Tool optional",
+    "One dominant thing + one supporting thing + one next action",
+    "Stop when another tool adds nothing"
+  ],
+  "edit_policy": "Read first. Preserve canon. Improve only where the change earns its place."
+}
