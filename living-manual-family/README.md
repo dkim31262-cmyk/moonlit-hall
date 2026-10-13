@@ -1,5 +1,7 @@
 # MOON × PAKIN · Living Manual Family Edition
 
+> **ARCHIVED REFERENCE · 13 OCT 2026** — This UI is no longer an active application or workflow. Moon requested that its useful principles be absorbed into **PAKIN INSTINCT STONE** as Pakin's default working habits, without requiring an app. The authoritative behavioral canon lives in Notion: https://app.notion.com/p/3d0e4ef21e1681cc8904c37f46206ee9. This folder remains for history and optional demonstration only. No ongoing build or new system is implied.
+
 A bilingual Thai + English interactive living manual for human + AI collaboration.
 
 ## Core
